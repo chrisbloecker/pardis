@@ -5,7 +5,6 @@
 module Main where
 
 import Crawler
-import GHC.Generics
 import Pardis.Parallel
 import System.Environment
 import qualified Data.Map as M

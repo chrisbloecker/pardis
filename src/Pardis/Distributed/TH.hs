@@ -4,7 +4,6 @@ module Pardis.Distributed.TH
   ( mkProcs
   ) where
 
-import Control.Distributed.Process.Closure
 import Control.Distributed.Process.Internal.Types
 import Control.Monad
 import Language.Haskell.TH

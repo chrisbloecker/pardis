@@ -10,7 +10,6 @@ module Main where
 import Control.Concurrent.MVar
 import Crawler
 import Data.Binary
-import Data.Typeable
 import Pardis.Distributed
 import System.Environment
 import qualified Control.Distributed.Process.Node as N
@@ -48,11 +47,10 @@ crawl :: Proc (Basic Process) Index Index
 crawl = Repetition $(liftP 'continueP) ($(liftP 'todoP) `Sequence` crawlAll)
   where
     crawlAll  = Choice $(liftP 'checkP) crawlOne crawlMany
-    --crawlOne  = $(liftP 'head_P) `Sequence` $(liftP 'pageP)
     crawlOne  = $(liftP 'head_P)  `Sequence` $(liftP 'pageP)
     crawlMany = $(liftP 'bisectP) `Sequence` Parallel $(liftP 'merge_P)
-                                          ($(liftP 'fst_P) `Sequence` crawlAll)
-                                          ($(liftP 'snd_P) `Sequence` crawlAll)
+                                               ($(liftP 'fst_P) `Sequence` crawlAll)
+                                               ($(liftP 'snd_P) `Sequence` crawlAll)
 
 -- | The main program expects some command line arguments and builds up an index.
 main :: IO ()

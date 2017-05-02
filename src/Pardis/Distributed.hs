@@ -44,7 +44,10 @@ instance Pardis Process where
     px   <- liftIO $ takeMVar mvar
     runProcess env r (px, qx)
 
-mkBasic f d = Lifted $ Basic f d
+-- | Helper function to lift Cloud Haskell processes into Pardis processes.
+mkBasic :: Serializable b => (a -> Closure (Process b)) -> Static (SerializableDict b) -> Proc (Basic Process) a b
+mkBasic fun dict = Lifted $ Basic fun dict
+{-# INLINABLE mkBasic #-}
 
 -- | Template Haskell function that lifts Cloud Haskell processes into Pardis
 -- processes. This function uses generates closures generators and selects the
@@ -52,6 +55,7 @@ mkBasic f d = Lifted $ Basic f d
 --
 -- Note that this function will only work on names that have been passed to
 -- Cloud Haskell's remotable function which takes care of generating the
--- required definitions of serialisation dictionaries.
+-- required definitions of closures and serialisation dictionaries.
 liftP :: Name -> Q Exp
-liftP n = [| Lifted $ Basic $(mkClosure n) $(functionTDict n) |]
+liftP n = [| mkBasic $(mkClosure n) $(functionTDict n) |]
+{-# INLINABLE liftP #-}
